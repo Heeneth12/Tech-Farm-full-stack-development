@@ -3,6 +3,7 @@ import NavBar from "../components/Navbar";
 import Footer from "../components/Fotter";
 import ServicesBody from "../components/ServicesBody";
 import ServiceSection from "../components/ServiceSection";
+import WeatherData from "../components/WeatherData";
 
 function Services() {
   return (
@@ -10,6 +11,7 @@ function Services() {
       <NavBar />
       <ServiceSection />
       <ServicesBody />
+      <WeatherData />
       <Footer />
     </>
   );

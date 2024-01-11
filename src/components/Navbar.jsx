@@ -1,6 +1,7 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, CloudIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import WeatherData from "./WeatherData";
 
 const user = {
   name: "Tom Cook",
@@ -27,6 +28,11 @@ function classNames(...classes) {
 }
 
 const NavBar = () => {
+  const [ShowWeather, SetShowWeather] = useState(false);
+  const handleWeatherBox = () => {
+    SetShowWeather(!ShowWeather);
+    console.log(ShowWeather);
+  };
   return (
     <>
       <div className="min-h-full">
@@ -76,6 +82,7 @@ const NavBar = () => {
                     <div className="ml-4 flex items-center md:ml-6">
                       <button
                         type="button"
+                        onClick={handleWeatherBox}
                         className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                       >
                         <span className="absolute -inset-1.5" />
@@ -184,6 +191,7 @@ const NavBar = () => {
                       </div>
                     </div>
                     <button
+                      onClick={handleWeatherBox}
                       type="button"
                       className="relative ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                     >
@@ -259,6 +267,7 @@ const NavBar = () => {
           </div>
         </header>
       </div>
+      <div>{ShowWeather ? <WeatherData /> : console.log("testing ")}</div>
     </>
   );
 };
