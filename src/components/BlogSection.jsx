@@ -1,82 +1,208 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import io, { connect } from "socket.io-client";
+const socket = io.connect("https://socketio-group-server.onrender.com");
 
-const data = [
-  {
-    id: "1",
-    name: "Heeneth",
-    message: "this is testing message",
-  },
-  {
-    id: "2",
-    name: "Heeneth",
-    message: "this is testing message",
-  },
-  {
-    id: "3",
-    name: "Heeneti",
-    message: "this is testing message",
-  },
-];
+const BlogSection = () => {
+  const [roomID, setroomID] = useState("");
+  const [room, setRoom] = useState("");
+  const [message, setMessage] = useState("");
+  const [receivedMessages, setReceivedMessages] = useState([]);
 
-function BlogSection() {
+  const joinRoom = () => {
+    if (room !== "") {
+      socket.emit("join_room", room);
+      setroomID(room);
+    } else {
+      socket.emit("join_room", "");
+      setroomID("");
+      // Send an empty string to join a random room
+    }
+  };
+
+  const sendMessage = () => {
+    socket.emit("send_message", { message, room: roomID });
+    setMessage(""); // Clear input after sending message
+  };
+
+  useEffect(() => {
+    socket.on("receive_message", (data) => {
+      setReceivedMessages((prevMessages) => [
+        ...prevMessages,
+        { message: data.message, type: "received" },
+      ]);
+    });
+
+    socket.on("user_disconnected", (data) => {
+      setReceivedMessages((prevMessages) => [
+        ...prevMessages,
+        { message: data.message, type: "disconnected" },
+      ]);
+    });
+    socket.on("user_paired", (data) => {
+      setroomID(data.room);
+    });
+
+    // Clean up socket listener on component unmount
+    return () => {
+      socket.off("receive_message");
+      socket.off("user_disconnected");
+      socket.off("user_paired");
+    };
+  }, []);
+
+  const addSentMessage = () => {
+    setReceivedMessages((prevMessages) => [
+      ...prevMessages,
+      { message: message, type: "sent" },
+    ]);
+  };
   return (
-    <>
-      <div className="box p-3 h-screen  bg-gray-300">
-        <div className="m-4 bg-gray-200 ">
-          <div className="p-2 flex  items-center  ">
-            <svg
-              width="34px"
-              height="34px"
-              viewBox="0 0 24 24"
-              style={{
-                borderRadius: 10,
-                padding: "4px",
-                backgroundColor: "white",
-              }}
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-              <g
-                id="SVGRepo_tracerCarrier"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              ></g>
-              <g id="SVGRepo_iconCarrier">
-                {" "}
+    <div
+      className="flex flex-col "
+      style={{
+        height: "92vh",
+      }}
+    >
+      <div className="bg-gray-200 p-2">
+        {/* Room creation or selection UI */}
+        <div className="mt-auto flex items-center">
+          <input
+            type="text"
+            className="w-full border rounded-lg py-2 px-3 mr-2 focus:outline-none"
+            placeholder="Creat Room ID..."
+            onChange={(event) => {
+              setRoom(event.target.value);
+            }}
+          />
+          <button
+            className="bg-blue-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none"
+            onClick={joinRoom}
+          >
+            Create
+          </button>
+        </div>
+      </div>
+      <div className="bg-white flex-1 flex flex-col">
+        {/* Chat UI */}
+        <div className="overflow-y-auto p-4 flex-1">
+          {/* Chat messages */}
+          <div className="chat-container">
+            <h1 className="font-bold bg-gray-200 p-1 rounded-lg m-1">
+              Room ID: {roomID}
+            </h1>
+            <div className="flex justify-center items-center ">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 200 200"
+                style={{
+                  width: "75px",
+                  height: "75px",
+                }}
+              >
                 <circle
-                  cx="10"
-                  cy="6"
-                  r="4"
-                  stroke="#1C274C"
-                  stroke-width="1.5"
-                ></circle>{" "}
-                <path
-                  d="M18.0429 12.3656L18.4865 11.7609L18.4865 11.7609L18.0429 12.3656ZM19 8.69135L18.4813 9.23307C18.7713 9.51077 19.2287 9.51077 19.5187 9.23307L19 8.69135ZM19.9571 12.3656L19.5135 11.7609L19.5135 11.7609L19.9571 12.3656ZM19 12.8276L19 13.5776H19L19 12.8276ZM18.4865 11.7609C18.0686 11.4542 17.6081 11.0712 17.2595 10.6681C16.8912 10.2423 16.75 9.91131 16.75 9.69673H15.25C15.25 10.4666 15.6912 11.1479 16.1249 11.6493C16.5782 12.1735 17.1391 12.6327 17.5992 12.9703L18.4865 11.7609ZM16.75 9.69673C16.75 9.12068 17.0126 8.87002 17.2419 8.78964C17.4922 8.70189 17.9558 8.72986 18.4813 9.23307L19.5187 8.14963C18.6943 7.36028 17.6579 7.05432 16.7457 7.3741C15.8125 7.70123 15.25 8.59955 15.25 9.69673H16.75ZM20.4008 12.9703C20.8609 12.6327 21.4218 12.1735 21.8751 11.6493C22.3088 11.1479 22.75 10.4666 22.75 9.69672H21.25C21.25 9.91132 21.1088 10.2424 20.7405 10.6681C20.3919 11.0713 19.9314 11.4542 19.5135 11.7609L20.4008 12.9703ZM22.75 9.69672C22.75 8.59954 22.1875 7.70123 21.2543 7.37409C20.3421 7.05432 19.3057 7.36028 18.4813 8.14963L19.5187 9.23307C20.0442 8.72986 20.5078 8.70189 20.7581 8.78964C20.9874 8.87002 21.25 9.12068 21.25 9.69672H22.75ZM17.5992 12.9703C17.9678 13.2407 18.3816 13.5776 19 13.5776L19 12.0776C18.9756 12.0776 18.9605 12.0775 18.9061 12.0488C18.8202 12.0034 18.7128 11.9269 18.4865 11.7609L17.5992 12.9703ZM19.5135 11.7609C19.2872 11.9269 19.1798 12.0034 19.0939 12.0488C19.0395 12.0775 19.0244 12.0776 19 12.0776L19 13.5776C19.6184 13.5776 20.0322 13.2407 20.4008 12.9703L19.5135 11.7609Z"
-                  fill="#1C274C"
-                ></path>{" "}
-                <path
-                  d="M17.9975 18C18 17.8358 18 17.669 18 17.5C18 15.0147 14.4183 13 10 13C5.58172 13 2 15.0147 2 17.5C2 19.9853 2 22 10 22C12.231 22 13.8398 21.8433 15 21.5634"
-                  stroke="#1C274C"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                ></path>{" "}
-              </g>
-            </svg>
-
-            {data.map((item, index) => (
-              <div key={index}>
-                <h1>{item.name}</h1>
-                <div className="box p-4 bg-gray-200 rounded-lg w-1/4">
-                  <h1>{item.message}</h1>
+                  fill="#3F7BFF"
+                  stroke="#3F7BFF"
+                  stroke-width="2"
+                  r="15"
+                  cx="40"
+                  cy="65"
+                >
+                  <animate
+                    attributeName="cy"
+                    calcMode="spline"
+                    dur="2.7"
+                    values="65;135;65;"
+                    keySplines=".5 0 .5 1;.5 0 .5 1"
+                    repeatCount="indefinite"
+                    begin="-.4"
+                  ></animate>
+                </circle>
+                <circle
+                  fill="#3F7BFF"
+                  stroke="#3F7BFF"
+                  stroke-width="2"
+                  r="15"
+                  cx="100"
+                  cy="65"
+                >
+                  <animate
+                    attributeName="cy"
+                    calcMode="spline"
+                    dur="2.7"
+                    values="65;135;65;"
+                    keySplines=".5 0 .5 1;.5 0 .5 1"
+                    repeatCount="indefinite"
+                    begin="-.2"
+                  ></animate>
+                </circle>
+                <circle
+                  fill="#3F7BFF"
+                  stroke="#3F7BFF"
+                  stroke-width="2"
+                  r="15"
+                  cx="160"
+                  cy="65"
+                >
+                  <animate
+                    attributeName="cy"
+                    calcMode="spline"
+                    dur="2.7"
+                    values="65;135;65;"
+                    keySplines=".5 0 .5 1;.5 0 .5 1"
+                    repeatCount="indefinite"
+                    begin="0"
+                  ></animate>
+                </circle>
+              </svg>
+            </div>
+            {receivedMessages.map((msg, index) => (
+              <div
+                key={index}
+                className={
+                  msg.type === "sent"
+                    ? "flex justify-end mb-2"
+                    : "flex justify-start mb-2"
+                }
+              >
+                <div
+                  className={
+                    msg.type === "sent"
+                      ? "bg-green-600 text-white p-3 rounded-l-full rounded-br-full max-w-3/4"
+                      : "bg-blue-600 text-white p-3 rounded-r-full rounded-bl-full max-w-3/4"
+                  }
+                >
+                  {msg.message}
                 </div>
               </div>
             ))}
           </div>
         </div>
+        {/* Input message and send button */}
+        <div className="p-4 border-t">
+          <div className="mt-auto flex items-center">
+            <input
+              type="text"
+              className="w-full border rounded-lg py-2 px-3 mr-2 focus:outline-none"
+              placeholder="Type your message..."
+              value={message}
+              onChange={(event) => {
+                setMessage(event.target.value);
+              }}
+            />
+            <button
+              className="bg-blue-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none"
+              onClick={() => {
+                sendMessage();
+                addSentMessage();
+              }}
+            >
+              Send
+            </button>
+          </div>
+        </div>
       </div>
-    </>
+    </div>
   );
-}
+};
 
 export default BlogSection;

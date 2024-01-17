@@ -9,7 +9,6 @@ export default function Community() {
     <>
       <NavBar />
       <BlogSection />
-      <BlogPostWriter />
       <Footer />
     </>
   );

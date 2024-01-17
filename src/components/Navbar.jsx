@@ -35,7 +35,7 @@ const NavBar = () => {
   };
   return (
     <>
-      <div className="min-h-full">
+      <div className="min-h-full static">
         <Disclosure
           as="nav"
           className="bg-gray-800"
@@ -266,8 +266,10 @@ const NavBar = () => {
             </div>
           </div>
         </header>
+        <div className="absolute top-16 right-0 z-50 h-full ">
+          {ShowWeather ? <WeatherData /> : console.log("testing ")}
+        </div>
       </div>
-      <div>{ShowWeather ? <WeatherData /> : console.log("testing ")}</div>
     </>
   );
 };

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
-function WeatherData() {
-  const [city, setCity] = useState("chennai");
+function Test() {
+  const city = "chennia";
   const [weatherData, setWeatherData] = useState(null);
 
   async function getWeather() {
@@ -19,9 +19,9 @@ function WeatherData() {
 
   return (
     <div
-      className="w-full relative mx-auto bg-blue-100 p-8 rounded-lg shadow-md item-center  "
+      className="w-full relative mx-auto bg-blue-100 p-8 rounded-lg shadow-md item-center "
       style={{
-        height: "30vh",
+        height: "40vh",
       }}
     >
       <h1 className="text-3xl font-bold mb-4">Weather Forecast</h1>
@@ -51,4 +51,4 @@ function WeatherData() {
   );
 }
 
-export default WeatherData;
+export default Test;

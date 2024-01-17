@@ -4,6 +4,7 @@ import Footer from "../components/Fotter";
 import ServicesBody from "../components/ServicesBody";
 import ServiceSection from "../components/ServiceSection";
 import WeatherData from "../components/WeatherData";
+import Test from "../components/Test";
 
 function Services() {
   return (
@@ -12,6 +13,7 @@ function Services() {
       <ServiceSection />
       <ServicesBody />
       <WeatherData />
+      <Test />
       <Footer />
     </>
   );

@@ -68,7 +68,7 @@ const Body = () => {
 
   return (
     <div
-      className="relative bg-gray-100 overflow-hidden"
+      className="relative  bg-gray-100 overflow-hidden"
       style={{ height: "70vh", position: "relative" }}
     >
       <img

@@ -7,8 +7,13 @@ import Footer from "../components/Fotter";
 function Home() {
   return (
     <>
-      <NavBar />
-      <Body />
+      <div className="z-50">
+        <NavBar />
+      </div>
+      <div className="z-0">
+        <Body />
+      </div>
+
       <BodyContent />
       <Footer />
     </>
