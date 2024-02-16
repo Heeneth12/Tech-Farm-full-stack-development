@@ -100,9 +100,11 @@ const Body = () => {
           <p style={paragraphStyle}>{currentDisplayParagraph}</p>
         </div>
 
-        <button className="mt-4 px-6 py-3 bg-green-500 text-white">
-          Explore
-        </button>
+        <a href="/Contact">
+          <button className="mt-4 px-6 py-3 bg-green-500 text-white">
+            Explore
+          </button>
+        </a>
       </div>
     </div>
   );

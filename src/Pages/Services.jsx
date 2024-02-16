@@ -13,7 +13,6 @@ function Services() {
       <ServiceSection />
       <ServicesBody />
       <WeatherData />
-      <Test />
       <Footer />
     </>
   );

@@ -1,205 +1,88 @@
-import React, { useState, useEffect } from "react";
-import io, { connect } from "socket.io-client";
-const socket = io.connect("https://socketio-group-server.onrender.com");
+import React from "react";
 
 const BlogSection = () => {
-  const [roomID, setroomID] = useState("");
-  const [room, setRoom] = useState("");
-  const [message, setMessage] = useState("");
-  const [receivedMessages, setReceivedMessages] = useState([]);
+  const peopleData = [
+    {
+      name: "Heeneth sai",
+      pic: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+      email: "john.doe@example.com",
+      ext: "1234",
+      kind: "Marketing",
+      cards: ["Software Development", "CEO"],
+    },
+    {
+      name: "Khushi Bansali",
+      pic: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+      email: "john.doe@example.com",
+      ext: "1234",
+      kind: "Marketing",
+      cards: ["Software Development", "Graphic Design"],
+    },
+    {
+      name: "Nithin",
+      pic: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+      email: "john.doe@example.com",
+      ext: "1234",
+      kind: "Marketing",
+      cards: ["Software Development", "Graphic Design"],
+    },
+    {
+      name: "Kumar",
+      pic: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+      email: "john.doe@example.com",
+      ext: "1234",
+      kind: "Marketing",
+      cards: ["Software Development", "Graphic Design"],
+    },
+    // Add more data objects for other people
+  ];
 
-  const joinRoom = () => {
-    if (room !== "") {
-      socket.emit("join_room", room);
-      setroomID(room);
-    } else {
-      socket.emit("join_room", "");
-      setroomID("");
-      // Send an empty string to join a random room
-    }
-  };
-
-  const sendMessage = () => {
-    socket.emit("send_message", { message, room: roomID });
-    setMessage(""); // Clear input after sending message
-  };
-
-  useEffect(() => {
-    socket.on("receive_message", (data) => {
-      setReceivedMessages((prevMessages) => [
-        ...prevMessages,
-        { message: data.message, type: "received" },
-      ]);
-    });
-
-    socket.on("user_disconnected", (data) => {
-      setReceivedMessages((prevMessages) => [
-        ...prevMessages,
-        { message: data.message, type: "disconnected" },
-      ]);
-    });
-    socket.on("user_paired", (data) => {
-      setroomID(data.room);
-    });
-
-    // Clean up socket listener on component unmount
-    return () => {
-      socket.off("receive_message");
-      socket.off("user_disconnected");
-      socket.off("user_paired");
-    };
-  }, []);
-
-  const addSentMessage = () => {
-    setReceivedMessages((prevMessages) => [
-      ...prevMessages,
-      { message: message, type: "sent" },
-    ]);
-  };
   return (
-    <div
-      className="flex flex-col "
-      style={{
-        height: "92vh",
-      }}
-    >
-      <div className="bg-gray-200 p-2">
-        {/* Room creation or selection UI */}
-        <div className="mt-auto flex items-center">
-          <input
-            type="text"
-            className="w-full border rounded-lg py-2 px-3 mr-2 focus:outline-none"
-            placeholder="Creat Room ID..."
-            onChange={(event) => {
-              setRoom(event.target.value);
-            }}
-          />
-          <button
-            className="bg-blue-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none"
-            onClick={joinRoom}
+    <div className="community-page bg-gray-100 py-16">
+      <h1 className="text-3xl font-bold pb-8 text-center">
+        Welcome to Our Community!
+      </h1>
+      <p className="text-gray-700 text-center pb-8">
+        Connect with fellow members to share knowledge, collaborate, and grow.
+      </p>
+
+      <div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-4">
+        {peopleData.map((person, index) => (
+          <div
+            key={index}
+            className="grid-item bg-white shadow-md rounded-md p-4"
           >
-            Create
-          </button>
-        </div>
-      </div>
-      <div className="bg-white flex-1 flex flex-col">
-        {/* Chat UI */}
-        <div className="overflow-y-auto p-4 flex-1">
-          {/* Chat messages */}
-          <div className="chat-container">
-            <h1 className="font-bold bg-gray-200 p-1 rounded-lg m-1">
-              Room ID: {roomID}
-            </h1>
-            <div className="flex justify-center items-center ">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 200 200"
-                style={{
-                  width: "75px",
-                  height: "75px",
-                }}
-              >
-                <circle
-                  fill="#3F7BFF"
-                  stroke="#3F7BFF"
-                  stroke-width="2"
-                  r="15"
-                  cx="40"
-                  cy="65"
-                >
-                  <animate
-                    attributeName="cy"
-                    calcMode="spline"
-                    dur="2.7"
-                    values="65;135;65;"
-                    keySplines=".5 0 .5 1;.5 0 .5 1"
-                    repeatCount="indefinite"
-                    begin="-.4"
-                  ></animate>
-                </circle>
-                <circle
-                  fill="#3F7BFF"
-                  stroke="#3F7BFF"
-                  stroke-width="2"
-                  r="15"
-                  cx="100"
-                  cy="65"
-                >
-                  <animate
-                    attributeName="cy"
-                    calcMode="spline"
-                    dur="2.7"
-                    values="65;135;65;"
-                    keySplines=".5 0 .5 1;.5 0 .5 1"
-                    repeatCount="indefinite"
-                    begin="-.2"
-                  ></animate>
-                </circle>
-                <circle
-                  fill="#3F7BFF"
-                  stroke="#3F7BFF"
-                  stroke-width="2"
-                  r="15"
-                  cx="160"
-                  cy="65"
-                >
-                  <animate
-                    attributeName="cy"
-                    calcMode="spline"
-                    dur="2.7"
-                    values="65;135;65;"
-                    keySplines=".5 0 .5 1;.5 0 .5 1"
-                    repeatCount="indefinite"
-                    begin="0"
-                  ></animate>
-                </circle>
-              </svg>
-            </div>
-            {receivedMessages.map((msg, index) => (
-              <div
-                key={index}
-                className={
-                  msg.type === "sent"
-                    ? "flex justify-end mb-2"
-                    : "flex justify-start mb-2"
-                }
-              >
-                <div
-                  className={
-                    msg.type === "sent"
-                      ? "bg-green-600 text-white p-3 rounded-l-full rounded-br-full max-w-3/4"
-                      : "bg-blue-600 text-white p-3 rounded-r-full rounded-bl-full max-w-3/4"
-                  }
-                >
-                  {msg.message}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        {/* Input message and send button */}
-        <div className="p-4 border-t">
-          <div className="mt-auto flex items-center">
-            <input
-              type="text"
-              className="w-full border rounded-lg py-2 px-3 mr-2 focus:outline-none"
-              placeholder="Type your message..."
-              value={message}
-              onChange={(event) => {
-                setMessage(event.target.value);
-              }}
+            <img
+              src={person.pic}
+              alt={`${person.name}'s profile picture`}
+              className="w-32 h-32 mx-auto rounded-full mb-4"
             />
-            <button
-              className="bg-blue-500 text-white py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none"
-              onClick={() => {
-                sendMessage();
-                addSentMessage();
-              }}
-            >
-              Send
-            </button>
+            <h3 className="text-2xl font-bold text-center">{person.name}</h3>
+            <p className="text-gray-600 text-center mb-4">
+              <span>{person.email}</span> | <span>{person.ext}</span> |{" "}
+              <span>{person.kind}</span>
+            </p>
+            <div className="flex flex-wrap gap-2 justify-center mb-4">
+              {person.cards.map((card, cardIndex) => (
+                <span
+                  key={cardIndex}
+                  className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                >
+                  {card}
+                </span>
+              ))}
+            </div>
           </div>
-        </div>
+        ))}
+      </div>
+
+      <div className="text-center mt-10">
+        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md">
+          Join our community
+        </button>
+        <button className="bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 font-bold py-2 px-4 rounded-md ml-4">
+          Learn more
+        </button>
       </div>
     </div>
   );
