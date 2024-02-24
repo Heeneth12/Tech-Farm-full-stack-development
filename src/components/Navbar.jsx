@@ -265,6 +265,16 @@ const NavBar = () => {
               </div>
             </div>
           </div>
+          <div className="">
+            <amp-ad
+              layout="fixed"
+              width="700"
+              height="90"
+              type="adsense"
+              data-ad-client="ca-pub-7917026221030700"
+              data-ad-slot="7244277574"
+            ></amp-ad>
+          </div>
         </header>
         <div className="absolute top-16 right-0 z-50 h-full ">
           {ShowWeather ? <WeatherData /> : console.log("testing ")}
