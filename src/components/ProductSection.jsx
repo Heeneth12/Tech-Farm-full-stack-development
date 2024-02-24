@@ -19,8 +19,9 @@ export default function ProductSection() {
                 Products
               </h1>
               <p className="mt-4 text-xl text-gray-500">
-                This year, our new summer collection will shelter you from the
-                harsh elements of a world that doesn't care if you live or die.
+                Farmers: Sell direct, earn fair, connect with consumers. Support
+                Consumers: Enjoy fresh, local food, support your community.
+                Build a healthier, sustainable food system!
               </p>
             </div>
             <div>

@@ -1,26 +1,9 @@
 import React, { useState } from "react";
-import emailjs from "emailjs-com";
-
-// Replace 'YOUR_PUBLIC_KEY' with your actual EmailJS public key
-emailjs.init({
-  publicKey: "ajXNm7xATNam3e4an",
-  // Do not allow headless browsers
-  blockHeadless: true,
-  blockList: {
-    // Block the suspended emails
-    list: ["foo@emailjs.com", "bar@emailjs.com"],
-    // The variable contains the email address
-    watchVariable: "userEmail",
-  },
-  limitRate: {
-    // Set the limit rate for the application
-    id: "app",
-    // Allow 1 request per 10s
-    throttle: 10000,
-  },
-});
+import axios from "axios";
+import Notification from "./Notification";
 
 const ContactCard = () => {
+  const [success, setSuccess] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -37,81 +20,88 @@ const ContactCard = () => {
     e.preventDefault();
 
     try {
-      const serviceId = "service_kck743j";
-      const templateId = "template_gsanvjc";
-
-      const response = await emailjs.send(serviceId, templateId, {
-        from_name: formData.firstName + " " + formData.lastName,
-        email: formData.email,
-        phoneNumber: formData.phoneNumber,
-        message: formData.message,
+      // Send form data to the backend API endpoint
+      const response = await axios.post(
+        "http://localhost:9000/api/contact",
+        formData
+      );
+      console.log(response.data.message); // Log success message
+      setSuccess(true);
+      // Optionally, you can reset the form after successful submission
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phoneNumber: "",
+        message: "",
       });
-
-      console.log(response); // Handle success response
     } catch (error) {
-      console.error(error); // Handle errors
+      console.error("Error submitting form:", error);
     }
   };
 
   return (
-    <div className="contact-container rounded-md p-2 mt-4 mb-12 bg-white-300 mt-24 mx-4 md:mx-auto md:w-1/2">
-      <h2 className="text-2xl font-bold mb-4">Contact us </h2>
+    <>
+      <Notification show={success} />
+      <div className="contact-container rounded-md p-2 mt-4 mb-12 bg-white-300 mt-24 mx-4 md:mx-auto md:w-1/2">
+        <h2 className="text-2xl font-bold mb-4">Contact us</h2>
 
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input
-            type="text"
-            name="firstName"
-            placeholder="First Name"
-            value={formData.firstName}
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input
+              type="text"
+              name="firstName"
+              placeholder="First Name"
+              value={formData.firstName}
+              onChange={handleChange}
+              className="border p-2 rounded-md focus:ring focus:ring-indigo-200"
+              required
+            />
+            <input
+              type="text"
+              name="lastName"
+              placeholder="Last Name"
+              value={formData.lastName}
+              onChange={handleChange}
+              className="border p-2 rounded-md focus:ring focus:ring-indigo-200"
+              required
+            />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleChange}
+              className="border p-2 rounded-md focus:ring focus:ring-indigo-200"
+              required
+            />
+            <input
+              type="tel"
+              name="phoneNumber"
+              placeholder="Phone Number"
+              value={formData.phoneNumber}
+              onChange={handleChange}
+              className="border p-2 rounded-md focus:ring focus:ring-indigo-200"
+            />
+          </div>
+          <textarea
+            name="message"
+            placeholder="Message"
+            value={formData.message}
             onChange={handleChange}
-            className="border p-2 rounded-md focus:ring focus:ring-indigo-200"
+            rows="4"
+            className="border p-2 rounded-md focus:ring focus:ring-indigo-200 w-full"
             required
-          />
-          <input
-            type="text"
-            name="lastName"
-            placeholder="Last Name"
-            value={formData.lastName}
-            onChange={handleChange}
-            className="border p-2 rounded-md focus:ring focus:ring-indigo-200"
-            required
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            className="border p-2 rounded-md focus:ring focus:ring-indigo-200"
-            required
-          />
-          <input
-            type="tel"
-            name="phoneNumber"
-            placeholder="Phone Number"
-            value={formData.phoneNumber}
-            onChange={handleChange}
-            className="border p-2 rounded-md focus:ring focus:ring-indigo-200"
-          />
-        </div>
-        <textarea
-          name="message"
-          placeholder="Message"
-          value={formData.message}
-          onChange={handleChange}
-          rows="4"
-          className="border p-2 rounded-md focus:ring focus:ring-indigo-200 w-full"
-          required
-        ></textarea>
-        <button
-          type="submit"
-          className="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 mt-4"
-        >
-          Send Message
-        </button>
-      </form>
-    </div>
+          ></textarea>
+          <button
+            type="submit"
+            className="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 mt-4"
+          >
+            Send Message
+          </button>
+        </form>
+      </div>
+    </>
   );
 };
 

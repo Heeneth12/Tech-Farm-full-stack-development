@@ -140,8 +140,8 @@ export default function BodyContent() {
                 Supply Chain Management
               </h2>
               <p className="mt-6">
-                Logistics: Tools for managing and optimizing the supply chain,
-                including tracking inventory, coordinating shipments, and
+                Logistics: Tools for managing and optimising the supply
+                chain,including tracking inventory, coordinating shipments, and
                 ensuring timely deliveries. Quality Assurance: Systems to
                 maintain quality standards throughout the process, including
                 packaging guidelines and quality checks.
