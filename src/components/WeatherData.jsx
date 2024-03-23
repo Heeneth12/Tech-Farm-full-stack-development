@@ -78,7 +78,7 @@ function WeatherData() {
       <div
         className="w-7/10 relative mx-auto bg-blue-100 p-8 rounded-lg shadow-md"
         style={{
-          width: "70%",
+          width: "90%",
         }}
       >
         <h1 className="text-3xl font-bold mb-4">Weather Forecast</h1>
