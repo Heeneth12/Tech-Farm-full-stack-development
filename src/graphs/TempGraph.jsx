@@ -20,7 +20,9 @@ function AgricultureTemperature({ constantTempMin, constantTempMax }) {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:9000/api/data");
+      const response = await axios.get(
+        "https://tech-farm-backend.onrender.com/api/data"
+      );
       const temperatureValues = response.data.documents.map((item) => ({
         temperature: item.temperature,
         constant: constantTempMin, // Use constantTemp prop for constant temperature

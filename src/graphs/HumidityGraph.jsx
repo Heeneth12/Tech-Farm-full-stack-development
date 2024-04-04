@@ -20,7 +20,9 @@ function HumidityGraph({ constantHumidityMin, constantHumidityMax }) {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:9000/api/data");
+      const response = await axios.get(
+        "https://tech-farm-backend.onrender.com/api/data"
+      );
       const humidityValues = response.data.documents.map((item) => ({
         humidity: item.humidity,
         min: constantHumidityMin,
