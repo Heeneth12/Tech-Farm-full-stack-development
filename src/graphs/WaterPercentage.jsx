@@ -19,7 +19,9 @@ function WaterPercentage({ constantWater }) {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:9000/api/data");
+      const response = await axios.get(
+        "https://tech-farm-backend.onrender.com/api/data"
+      );
       const WaterPercentageValues = response.data.documents.map((item) => ({
         rainfall: item.rainfall,
         constant: constantWater, // Use constantTemp prop for constant temperature
